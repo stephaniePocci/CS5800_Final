@@ -1,0 +1,164 @@
+@startuml
+
+class Account {
+    - userID: String
+    - password: String
+    - profileList: List<Profile>
+    - subscriptionHistory: List<Subscription>
+    - email: String
+    - paymentInfo: PaymentInfo
+
+    + login(userID, password): boolean
+    + createProfile(name, profilePicture): Profile
+    + addSubscription(subscription: Subscription): void
+    + updatePaymentInfo(paymentInfo: PaymentInfo): void
+    + searchByTitle(title: String): List<Media>
+    + searchByGenre(genre: String): List<Media>
+}
+
+class Profile {
+    - name: String
+    - profilePicture: Image
+    - watchList: List<Media>
+    - reviewList: List<Review>
+    - watchedMediaList: List<Media>
+    - bookmarks: Map<Media, Duration>
+    - viewingHistory: List<Media>
+    - contentRatingPreference: ContentRating
+
+    + addToWatchList(media: Media): void
+    + removeFromWatchList(media: Media): void
+    + writeReview(review: Review): void
+    + markAsWatched(media: Media): void
+    + setBookmark(media: Media, duration: Duration): void
+    + setContentRatingPreference(rating: ContentRating): void
+    + getSuggestedTitles(): List<Media>
+    + removeFromSuggestions(media: Media): void
+    + getSearchHistory(): List<String>
+}
+
+class Media {
+    <abstract>
+    # title: String
+    # contentRating: ContentRating
+    # productionYear: int
+    # description: String
+    # genres: List<Genre>
+    # cast: List<String>
+    # reviews: List<Review>
+    # starRating: float
+
+    + getTitle(): String
+    + getContentRating(): ContentRating
+    + getProductionYear(): int
+    + getDescription(): String
+    + getGenres(): List<Genre>
+    + getCast(): List<String>
+    + getReviews(): List<Review>
+    + getStarRating(): float
+}
+
+class Movie {
+    - duration: Duration
+
+    + getDuration(): Duration
+    + setBookmark(duration: Duration): void
+}
+
+class TVShow {
+    - episodes: List<TVEpisode>
+
+    + getEpisodes(): List<TVEpisode>
+    + setBookmark(episode: TVEpisode, duration: Duration): void
+}
+
+class TVEpisode {
+    - duration: Duration
+
+    + getDuration(): Duration
+}
+
+class Genre {
+    - name: String
+    - description: String
+    - mediaList: List<Media>
+
+    + getName(): String
+    + getDescription(): String
+    + getMediaList(): List<Media>
+}
+
+class WatchList {
+    - mediaList: List<Media>
+
+    + addMedia(media: Media): void
+    + removeMedia(media: Media): void
+    + getMediaList(): List<Media>
+}
+
+class Subscription {
+    - subscriptionID: String
+    - startDate: Date
+    - renewalDate: Date
+    - plan: SubscriptionPlan
+    - paymentInfo: PaymentInfo
+
+    + getSubscriptionID(): String
+    + getStartDate(): Date
+    + getRenewalDate(): Date
+    + getPlan(): SubscriptionPlan
+    + processPayment(): boolean
+}
+
+class SubscriptionPlan {
+    <enumeration>
+}
+
+class PaymentInfo {
+    # paymentMethod: PaymentMethod
+    # cardNumber: String
+    # expiryDate: Date
+    # cvv: int
+
+    + makePayment(amount: float): boolean
+}
+
+class PaymentMethod {
+    <enumeration>
+}
+
+class Payment {
+    - paymentID: String
+    - amount: float
+    - date: Date
+
+    + getPaymentID(): String
+    + getAmount(): float
+    + getDate(): Date
+}
+
+class Review {
+    - text: String
+    - starRating: int
+    - reviewer: String
+
+    + getText(): String
+    + getStarRating(): int
+    + getReviewer(): String
+}
+
+Account *--  Profile
+Profile  *--  WatchList
+Profile  *--  Review
+Media <|-- Movie
+Media <|-- TVShow
+TVShow *--  TVEpisode
+Account  *--  Subscription
+Subscription  --  SubscriptionPlan
+Subscription  --  PaymentInfo
+PaymentInfo  --  PaymentMethod
+Subscription  *--  Payment
+Media *--  Review
+Media *-- Genre
+
+@enduml
